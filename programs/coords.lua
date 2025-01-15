@@ -15,10 +15,18 @@ end
 function PrintCoords(name)
     local x,y,z
     if name == nil then
+        --- Get current location
         x,y,z = gps.locate()
-    else
-        x,y,z = coords.getCoords(name)
+        if x == nil or y == nil or z == nil then
+            print("Location could no be determined")
+        else 
+            print("Location is: " .. x .. " " .. y .. " " .. z)
+        end
+        return
     end
+
+    --- Get stored location
+    x,y,z = coords.getCoords(name)
     if x == nil or y == nil or z == nil then
         print("Alias \"" .. name .. "\" not set")
     else
