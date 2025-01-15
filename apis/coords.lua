@@ -15,39 +15,6 @@ function module.define(name, description)
     })
 end
 
-function module.setCompletionFunction()
-    local names = {}
-    local allNames = settings.getNames()
-    for _, name in ipairs(allNames) do
-        if name:sub(1, 9) == "location." then
-            local locationName = name:sub(10)
-            if locationName ~= "" then
-                table.insert(names, locationName)
-            end
-        end
-    end
-    shell.setCompletionFunction("/programs/coords.lua", completion.build({ completion.choice, { "get", "set" } }, { completion.choice, names }))
-    -- return shell.setCompletionFunction(
-    --     "/programs/coords.lua",
-    --     function(shell, index, text, previous)
-    --         if index == 1 then
-    --             return { "get", "set" }
-    --         elseif index == 2 then
-    --             local names = {}
-    --             for name in settings.getNames() do
-    --                 if name:sub(1, 9) == "location." then
-    --                     local locationName = name:sub(10)
-    --                     if locationName ~= "" then
-    --                         table.insert(names, locationName)
-    --                     end
-    --                 end
-    --             end
-    --             return names
-    --         end
-    --     end
-    -- )
-end
-
 ---@param name string #The name of the coordinate to get
 ---@return number | nil, number | nil, number | nil
 function module.getCoords(name)

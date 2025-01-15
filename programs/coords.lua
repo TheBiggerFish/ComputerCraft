@@ -6,7 +6,7 @@ function PrintUsage()
     print("Usages:")
     print(programName .. " get [name]")
     print(programName .. " set <name>")
-    print(programName .. " set <x> <y> <z>")
+    print(programName .. " set <name> <x> <y> <z>")
     error()
 end
 
