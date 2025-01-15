@@ -30,7 +30,7 @@ function PrintCoords(name)
     if x == nil or y == nil or z == nil then
         print("Alias \"" .. name .. "\" not set")
     else
-        print("Alias \"" .. name .. "\" set to: " .. x .. " " .. y .. " " .. z)
+        print("Alias \"" .. name .. "\" is set to: " .. x .. " " .. y .. " " .. z)
     end
 end
 
@@ -48,7 +48,7 @@ end
 ---@returns nil
 function SetCoord(name, x, y, z)
     coords.saveCoords(name, x, y, z)
-    print("Set alias\"" .. name .. "\" to: " .. x .. " " .. y .. " " .. z)
+    print("Set alias \"" .. name .. "\" to: " .. x .. " " .. y .. " " .. z)
 end
 
 if #arg < 1 then
