@@ -15,7 +15,7 @@ end
 
 ---@param name string #The name of the coordinate to get
 ---@return integer | nil, integer | nil, integer | nil
-function module.getCoord(name)
+function module.getCoords(name)
     local location = settings.get(getName(name))
     if location == nil then
         return nil, nil, nil
@@ -35,7 +35,7 @@ end
 ---@param y integer #New home coordinate (y axis)
 ---@param z integer #New home coordinate (z axis)
 ---@return boolean #Whether the home setting was set successfully
-function module.saveCoord(name, x, y, z)
+function module.saveCoords(name, x, y, z)
     if type(x) ~= "integer" or type(y) ~= "integer" or type(z) ~= "integer" then
         return false
     end

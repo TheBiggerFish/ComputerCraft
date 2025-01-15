@@ -47,14 +47,14 @@ end
 ---@param z integer
 ---@returns nil
 function SetCoord(name, x, y, z)
-    coords.saveCoord(name, x, y, z)
+    coords.saveCoords(name, x, y, z)
     print("Set alias\"" .. name .. "\" to: " .. x .. " " .. y .. " " .. z)
 end
 
 if #arg < 1 then
     PrintUsage()
 elseif arg[1] == "get" and #arg == 1 then
-    PrintCoords()
+    PrintCoords("")
 elseif arg[1] == "get" and #arg == 2 then
     PrintCoords(arg[2])
 elseif arg[1] == "set" and #arg == 2 then
