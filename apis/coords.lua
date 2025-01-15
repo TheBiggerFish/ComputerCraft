@@ -17,7 +17,8 @@ end
 
 function module.setCompletionFunction()
     local names = {}
-    for name in settings.getNames() do
+    local allNames = settings.getNames()
+    for _, name in ipairs(allNames) do
         if name:sub(1, 9) == "location." then
             local locationName = name:sub(10)
             if locationName ~= "" then
@@ -25,7 +26,7 @@ function module.setCompletionFunction()
             end
         end
     end
-    return shell.setCompletionFunction("/programs/coords.lua", completion.build({ completion.choice, { "get", "set" } }, { completion.choice, names }))
+    shell.setCompletionFunction("/programs/coords.lua", completion.build({ completion.choice, { "get", "set" } }, { completion.choice, names }))
     -- return shell.setCompletionFunction(
     --     "/programs/coords.lua",
     --     function(shell, index, text, previous)
