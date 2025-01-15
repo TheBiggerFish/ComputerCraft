@@ -1,17 +1,18 @@
-local gps = require("gps")
+local home = require("/apis/home")
 
 ---@returns nil
 function PrintUsage()
     local programName = arg[0] or fs.getName(shell.getRunningProgram())
-    print("Usages: \n" .. programName .. " get\n" .. programName .. " set\n" .. programName .. " set <x> <y> <z>")
+    print("Usages:")
+    print(programName .. " get")
+    print(programName .. " set")
+    print(programName .. " set <x> <y> <z>")
     error()
 end
 
 ---@returns nil
 function PrintHome()
-    local x = settings.get("home.x")
-    local y = settings.get("home.y")
-    local z = settings.get("home.z")
+    local x,y,z = home.getHome()
     if x == nil or y == nil or z == nil then
         print("Home is not set")
     else
@@ -30,9 +31,7 @@ end
 ---@param z integer
 ---@returns nil
 function SetHome(x, y, z)
-    settings.set("home.x", x)
-    settings.set("home.y", y)
-    settings.set("home.z", z)
+    home.setHome(x, y, z)
 end
 
 if #arg < 1 then
