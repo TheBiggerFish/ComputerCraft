@@ -1,5 +1,7 @@
 local module = {}
 
+local completion = require "cc.shell.completion"
+
 
 function getName(name)
     return "location." .. name
@@ -14,25 +16,35 @@ function module.define(name, description)
 end
 
 function module.setCompletionFunction()
-    return shell.setCompletionFunction(
-        "/programs/coords.lua",
-        function(shell, index, text, previous)
-            if index == 1 then
-                return { "get", "set" }
-            elseif index == 2 then
-                local names = {}
-                for name in settings.getNames() do
-                    if name:sub(1, 9) == "location." then
-                        local locationName = name:sub(10)
-                        if locationName ~= "" then
-                            table.insert(names, locationName)
-                        end
-                    end
-                end
-                return names
+    local names = {}
+    for name in settings.getNames() do
+        if name:sub(1, 9) == "location." then
+            local locationName = name:sub(10)
+            if locationName ~= "" then
+                table.insert(names, locationName)
             end
         end
-    )
+    end
+    return shell.setCompletionFunction("/programs/coords.lua", completion.build({ completion.choice, { "get", "set" } }, { completion.choice, names }))
+    -- return shell.setCompletionFunction(
+    --     "/programs/coords.lua",
+    --     function(shell, index, text, previous)
+    --         if index == 1 then
+    --             return { "get", "set" }
+    --         elseif index == 2 then
+    --             local names = {}
+    --             for name in settings.getNames() do
+    --                 if name:sub(1, 9) == "location." then
+    --                     local locationName = name:sub(10)
+    --                     if locationName ~= "" then
+    --                         table.insert(names, locationName)
+    --                     end
+    --                 end
+    --             end
+    --             return names
+    --         end
+    --     end
+    -- )
 end
 
 ---@param name string #The name of the coordinate to get
