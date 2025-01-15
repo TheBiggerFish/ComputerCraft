@@ -10,11 +10,11 @@ function PrintUsage()
     error()
 end
 
----@param name string | nil Name of the coordinate to print
+---@param name string Name of the coordinate to print
 ---@returns nil
 function PrintCoords(name)
     local x,y,z
-    if name == nil then
+    if name == nil or name == "" then
         --- Get current location
         x,y,z = gps.locate()
         if x == nil or y == nil or z == nil then
