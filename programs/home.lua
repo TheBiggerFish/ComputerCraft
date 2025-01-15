@@ -35,13 +35,13 @@ function SetHome(x, y, z)
     settings.set("home.z", z)
 end
 
-if #arg < 2 then
+if #arg < 1 then
     PrintUsage()
-elseif arg[1] == "get" and #arg == 2 then
+elseif arg[1] == "get" and #arg == 1 then
     PrintHome()
-elseif arg[1] == "set" and #arg == 2 then
+elseif arg[1] == "set" and #arg == 1 then
     SetHomeHere()
-elseif arg[1] == "set" and #arg == 5 then
+elseif arg[1] == "set" and #arg == 4 then
     local x,y,z
     x = tonumber(arg[3])
     y = tonumber(arg[4])
