@@ -1,7 +1,7 @@
 local module = {}
 
 ---@return integer | nil, integer | nil, integer | nil
-function getHome()
+function module.getHome()
     local x = settings.get("home.x")
     local y = settings.get("home.y")
     local z = settings.get("home.z")
@@ -18,7 +18,7 @@ end
 ---@param y integer #New home coordinate (y axis)
 ---@param z integer #New home coordinate (z axis)
 ---@return boolean #Whether the home setting was set successfully
-function setHome(x, y, z)
+function module.setHome(x, y, z)
     if type(x) ~= "integer" or type(y) ~= "integer" or type(z) ~= "integer" then
         return false
     end
