@@ -1,5 +1,5 @@
-local arguments = require("/api/arguments")
-local mailserver = require("/api/mail")
+local arguments = require("/apis/arguments")
+local mailserver = require("/apis/mail")
 
 
 ---@returns nil

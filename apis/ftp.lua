@@ -1,6 +1,6 @@
 local ftp = {}
 
-local time = require("/api/time")
+local time = require("/apis/time")
 
 ---@type protocol
 ftp.PROTOCOL = "ftp"
