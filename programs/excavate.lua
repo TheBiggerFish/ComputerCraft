@@ -12,14 +12,14 @@ if homeX == nil then
 end
 
 local tArgs = { ... }
-if #tArgs ~= 1 and #tArgs ~= 2 then
+if #tArgs ~= 0 and #tArgs ~= 1 and #tArgs ~= 2 then
     local programName = arg[0] or fs.getName(shell.getRunningProgram())
     print("Usage: " .. programName .. " <diameter> [skip]")
     return
 end
 
 -- Mine in a quarry pattern until we hit something we can't dig
-local size = tonumber(tArgs[1])
+local size = settings.get("excavation.size", tonumber(tArgs[1]))
 if size < 1 then
     print("Excavate diameter must be positive")
     return
@@ -28,6 +28,8 @@ end
 local skip = tonumber(tArgs[2])
 if skip ~= nil and continuing then
     continuing = false
+elseif skip == nil then
+    skip = 0
 end
 
 local depth = 0
@@ -42,7 +44,7 @@ local refuel -- Filled in further down
 
 local continuing = settings.get("excavation.in_progress")
 local realX, realY, realZ = gps.locate()
-if continuing == nil then
+if continuing == nil or not continuing then
     continuing = false
     coords.saveCoords("home", realX, realY, realZ)
     settings.set("excavation.xDir", xDir)
@@ -53,17 +55,16 @@ else
         return
     end
 
-    depth = realY - homeY
+    depth = homeY - realY
     xPos = realX - homeX
     zPos = realZ - homeZ
     
     xDir = settings.get("excavation.xDir", xDir)
     zDir = settings.get("excavation.zDir", zDir)
 end
+settings.set("excavation.size", size)
 settings.set("excavation.in_progress", true)
 settings.save()
-
-goTo(0, depth, 0, 0, 1)
 
 local function unload(_bKeepOneFuelStack)
     print("Unloading items...")
@@ -360,6 +361,8 @@ end
 
 
 
+goTo(0, depth, 0, 0, 1)
+
 if skip > 0 then
     print("Navigating to target site...")
     for _ = 1, skip do
@@ -450,6 +453,7 @@ end
 settings.set("excavation.in_progress", false)
 settings.unset("excavation.xDir")
 settings.unset("excavation.zDir")
+settings.unset("excavation.size")
 settings.save()
 
 print("Mined " .. collected + unloaded .. " items total.")
