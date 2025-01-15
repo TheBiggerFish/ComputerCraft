@@ -8,5 +8,6 @@
         "deprecated",
         "redefined-local",
         "ambiguity-1"
-    ]
+    ],
+    "Lua.runtime.version": "Lua 5.2"
 }

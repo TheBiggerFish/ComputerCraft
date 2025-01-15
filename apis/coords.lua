@@ -14,7 +14,7 @@ function module.define(name, description)
 end
 
 ---@param name string #The name of the coordinate to get
----@return integer | nil, integer | nil, integer | nil
+---@return number | nil, number | nil, number | nil
 function module.getCoords(name)
     local location = settings.get(getName(name))
     if location == nil then
@@ -24,19 +24,19 @@ function module.getCoords(name)
     local x = location.x
     local y = location.y
     local z = location.z
-    if type(x) ~= "integer" or type(y) ~= "integer" or type(z) ~= "integer" then
+    if type(x) ~= "number" or type(y) ~= "number" or type(z) ~= "number" then
         return nil, nil, nil
     end
     return x, y, z
 end
 
 ---@param name string #The name of the coordinate to set
----@param x integer #New home coordinate (x axis)
----@param y integer #New home coordinate (y axis)
----@param z integer #New home coordinate (z axis)
+---@param x number #New home coordinate (x axis)
+---@param y number #New home coordinate (y axis)
+---@param z number #New home coordinate (z axis)
 ---@return boolean #Whether the home setting was set successfully
 function module.saveCoords(name, x, y, z)
-    if type(x) ~= "integer" or type(y) ~= "integer" or type(z) ~= "integer" then
+    if type(x) ~= "number" or type(y) ~= "number" or type(z) ~= "number" then
         return false
     end
     local location = {

@@ -42,9 +42,9 @@ function SetCoordHere(name)
 end
 
 ---@param name string Name of the coordinate to store
----@param x integer
----@param y integer
----@param z integer
+---@param x number
+---@param y number
+---@param z number
 ---@returns nil
 function SetCoord(name, x, y, z)
     coords.saveCoords(name, x, y, z)
@@ -68,10 +68,7 @@ elseif arg[1] == "set" and #arg == 5 then
         PrintUsage()
         error()
     end
-    --- cast to integer
-    x = math.floor(x)
-    y = math.floor(y)
-    z = math.floor(z)
+    --- cast to number
     SetCoord(arg[2], x,y,z)
 else 
     PrintUsage()
