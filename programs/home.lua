@@ -32,6 +32,7 @@ end
 ---@returns nil
 function SetHome(x, y, z)
     home.setHome(x, y, z)
+    print("Set home to: " .. x .. " " .. y .. " " .. z)
 end
 
 if #arg < 1 then
