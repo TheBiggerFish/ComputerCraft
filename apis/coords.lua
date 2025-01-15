@@ -48,7 +48,6 @@ function module.saveCoords(name, x, y, z)
     }
     settings.set(getName(name), location)
     settings.save()
-    module.setCompletionFunction()
     return true
 end
 

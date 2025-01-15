@@ -1,8 +1,8 @@
 local status = settings.get("excavation.in_progress")
 if status == nil then
-    settings.set("excavation.in_progress", false)
-    settings.save()
     status = false
+    settings.set("excavation.in_progress", status)
+    settings.save()
 end
 
 if status then
