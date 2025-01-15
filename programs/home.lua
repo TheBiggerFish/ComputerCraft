@@ -37,11 +37,11 @@ end
 
 if #arg < 2 then
     PrintUsage()
-elseif arg[2] == "get" and #arg == 2 then
+elseif arg[1] == "get" and #arg == 2 then
     PrintHome()
-elseif arg[2] == "set" and #arg == 2 then
+elseif arg[1] == "set" and #arg == 2 then
     SetHomeHere()
-elseif arg[2] == "set" and #arg == 5 then
+elseif arg[1] == "set" and #arg == 5 then
     local x,y,z
     x = tonumber(arg[3])
     y = tonumber(arg[4])
