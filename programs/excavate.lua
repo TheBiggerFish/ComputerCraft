@@ -42,30 +42,6 @@ local xDir, zDir = 0, 1
 local goTo -- Filled in further down
 local refuel -- Filled in further down
 
-local continuing = settings.get("excavation.in_progress")
-local realX, realY, realZ = gps.locate()
-if continuing == nil or not continuing then
-    continuing = false
-    coords.saveCoords("home", realX, realY, realZ)
-    settings.set("excavation.xDir", xDir)
-    settings.set("excavation.zDir", zDir)
-else
-    if realX == nil then
-        print("Could not determine position")
-        return
-    end
-
-    depth = homeY - realY
-    xPos = realX - homeX
-    zPos = realZ - homeZ
-    
-    xDir = settings.get("excavation.xDir", xDir)
-    zDir = settings.get("excavation.zDir", zDir)
-end
-settings.set("excavation.size", size)
-settings.set("excavation.in_progress", true)
-settings.save()
-
 local function unload(_bKeepOneFuelStack)
     print("Unloading items...")
     for n = 1, 16 do
@@ -359,7 +335,40 @@ if not refuel() then
     return
 end
 
+print("Calibrate directionality")
+local realX, realY, realZ = gps.locate()
+tryForwards()
+local newX, newY, newZ = gps.locate()
+if realX == nil or newX == nil then
+    print("Could not determine position")
+    return
+end
+turnLeft()
+turnLeft()
+tryForwards()
+turnRight()
+turnRight()
 
+xDir = newX - realX
+zDir = newZ - realZ
+
+local continuing = settings.get("excavation.in_progress")
+if continuing == nil or not continuing then
+    continuing = false
+    coords.saveCoords("home", realX, realY, realZ)
+    settings.set("excavation.xDir", xDir)
+    settings.set("excavation.zDir", zDir)
+else
+    depth = homeY - realY
+    xPos =  homeX - realX
+    zPos =  homeZ - realZ
+    
+    xDir = settings.get("excavation.xDir", xDir)
+    zDir = settings.get("excavation.zDir", zDir)
+end
+settings.set("excavation.size", size)
+settings.set("excavation.in_progress", true)
+settings.save()
 
 goTo(0, depth, 0, 0, 1)
 
