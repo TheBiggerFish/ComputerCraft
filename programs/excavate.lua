@@ -1,61 +1,73 @@
-local coords = require("/apis/coords")
+-- SPDX-FileCopyrightText: 2017 Daniel Ratcliffe
+--
+-- SPDX-License-Identifier: LicenseRef-CCPL
 
 if not turtle then
     printError("Requires a Turtle")
     return
 end
 
-local homeX, homeY, homeZ = coords.getCoords("home")
-if homeX == nil then
-    print("Home position not set")
-    return
-end
-
 local tArgs = { ... }
-if #tArgs ~= 0 and #tArgs ~= 1 and #tArgs ~= 2 then
+if #tArgs ~= 1 then
     local programName = arg[0] or fs.getName(shell.getRunningProgram())
-    print("Usage: " .. programName .. " <diameter> [skip]")
+    print("Usage: " .. programName .. " [diameter]")
     return
-end
-
-local continuing = settings.get("excavation.in_progress")
-if continuing == nil or not continuing then
-    continuing = false
-    settings.set("excavation.in_progress", continuing)
-    settings.save()
 end
 
 -- Mine in a quarry pattern until we hit something we can't dig
-local size = settings.get("excavation.size", tonumber(tArgs[1]))
-if continuing and size == nil then
-    print("Excavation size not set")
-    return
-elseif continuing then
-    print("Resuming excavation with size " .. size)
-else
-    size = tonumber(tArgs[1])
-end
+local size = settings.get("excavate.size", tonumber(tArgs[1]))
 if size < 1 then
     print("Excavate diameter must be positive")
     return
 end
 
-local skip = tonumber(tArgs[2])
-if skip ~= nil and continuing then
-    continuing = false
-elseif skip == nil then
-    skip = 0
-end
-
-local depth = 0
+local depth = settings.get("excavate.depth", 0)
 local unloaded = 0
 local collected = 0
 
-local xPos, zPos = 0, 0
-local xDir, zDir = 0, 1
+local xPos = settings.get("excavate.xPos", 0)
+local zPos = settings.get("excavate.zPos", 0)
+local xDir = settings.get("excavate.xDir", 0)
+local zDir = settings.get("excavate.zDir", 1)
 
 local goTo -- Filled in further down
 local refuel -- Filled in further down
+
+local function turnLeft()
+    turtle.turnLeft()
+    xDir, zDir = -zDir, xDir
+    settings.set("excavate.xDir", xDir)
+    settings.set("excavate.zDir", zDir)
+    settings.save()
+end
+
+local function turnRight()
+    turtle.turnRight()
+    xDir, zDir = zDir, -xDir
+    settings.set("excavate.xDir", xDir)
+    settings.set("excavate.zDir", zDir)
+    settings.save()
+end
+
+local function goUp()
+    depth = depth - 1
+    settings.set("excavate.depth", depth)
+    settings.save()
+end
+
+local function goDown()
+    depth = depth + 1
+    settings.set("excavate.depth", depth)
+    settings.save()
+end
+
+local function goForward()
+    xPos = xPos + xDir
+    zPos = zPos + zDir
+    settings.set("excavate.xPos", xPos)
+    settings.set("excavate.zPos", zPos)
+    settings.save()
+end
 
 local function unload(_bKeepOneFuelStack)
     print("Unloading items...")
@@ -176,44 +188,9 @@ local function tryForwards()
         end
     end
 
-    xPos = xPos + xDir
-    zPos = zPos + zDir
+    goForward()
     return true
 end
-
-local function tryUp()
-    if not refuel() then
-        print("Not enough Fuel")
-        returnSupplies()
-    end
-    
-    while not turtle.up() do
-        if turtle.detectUp() then
-            if turtle.digUp() then
-                if not collect() then
-                    returnSupplies()
-                end
-            else
-                return false
-            end
-        elseif turtle.attackUp() then
-            if not collect() then
-                returnSupplies()
-            end
-        else
-            sleep(0.5)
-        end
-    end
-    
-    depth = depth - 1
-    if math.fmod(depth, 10) == 0 then
-        print("Ascended " .. depth .. " meters")
-    end
-    
-    return true
-end
-    
-    
 
 local function tryDown()
     if not refuel() then
@@ -239,7 +216,8 @@ local function tryDown()
         end
     end
 
-    depth = depth + 1
+    goDown()
+
     if math.fmod(depth, 10) == 0 then
         print("Descended " .. depth .. " metres.")
     end
@@ -247,26 +225,10 @@ local function tryDown()
     return true
 end
 
-local function turnLeft()
-    turtle.turnLeft()
-    xDir, zDir = -zDir, xDir
-    settings.set("excavation.xDir", xDir)
-    settings.set("excavation.zDir", zDir)
-    settings.save()
-end
-
-local function turnRight()
-    turtle.turnRight()
-    xDir, zDir = zDir, -xDir
-    settings.set("excavation.xDir", xDir)
-    settings.set("excavation.zDir", zDir)
-    settings.save()
-end
-
 function goTo(x, y, z, xd, zd)
     while depth > y do
         if turtle.up() then
-            depth = depth - 1
+            goUp()
         elseif turtle.digUp() or turtle.attackUp() then
             collect()
         else
@@ -280,7 +242,7 @@ function goTo(x, y, z, xd, zd)
         end
         while xPos > x do
             if turtle.forward() then
-                xPos = xPos - 1
+                goForward()
             elseif turtle.dig() or turtle.attack() then
                 collect()
             else
@@ -293,7 +255,8 @@ function goTo(x, y, z, xd, zd)
         end
         while xPos < x do
             if turtle.forward() then
-                xPos = xPos + 1
+                goForward()
+                settings.set("excavate.xPos", xPos)
             elseif turtle.dig() or turtle.attack() then
                 collect()
             else
@@ -308,7 +271,7 @@ function goTo(x, y, z, xd, zd)
         end
         while zPos > z do
             if turtle.forward() then
-                zPos = zPos - 1
+                goForward()
             elseif turtle.dig() or turtle.attack() then
                 collect()
             else
@@ -321,7 +284,7 @@ function goTo(x, y, z, xd, zd)
         end
         while zPos < z do
             if turtle.forward() then
-                zPos = zPos + 1
+                goForward()
             elseif turtle.dig() or turtle.attack() then
                 collect()
             else
@@ -332,7 +295,7 @@ function goTo(x, y, z, xd, zd)
 
     while depth < y do
         if turtle.down() then
-            depth = depth + 1
+            goDown()
         elseif turtle.digDown() or turtle.attackDown() then
             collect()
         else
@@ -350,54 +313,6 @@ if not refuel() then
     return
 end
 
-print("Calibrate directionality")
-local realX, realY, realZ = gps.locate()
-tryForwards()
-local newX, newY, newZ = gps.locate()
-if realX == nil or newX == nil then
-    print("Could not determine position")
-    return
-end
-turnLeft()
-turnLeft()
-tryForwards()
-turnRight()
-turnRight()
-
-xDir = newX - realX
-zDir = newZ - realZ
-
-if not continuing then
-    coords.saveCoords("home", realX, realY, realZ)
-    settings.set("excavation.xDir", xDir)
-    settings.set("excavation.zDir", zDir)
-else
-    depth = homeY - realY
-    xPos =  homeX - realX
-    zPos =  homeZ - realZ
-    
-    xDir = settings.get("excavation.xDir", xDir)
-    zDir = settings.get("excavation.zDir", zDir)
-end
-settings.set("excavation.size", size)
-settings.set("excavation.in_progress", true)
-settings.save()
-
-goTo(0, depth, 0, 0, 1)
-
-if skip > 0 then
-    print("Navigating to target site...")
-    for _ = 1, skip do
-        tryDown()
-    end
-
-elseif skip < 0 then   
-    print("Navigating to target site...")
-    for _ = skip, -1 do
-        tryUp()
-    end
-end
-
 print("Excavating...")
 
 local reseal = false
@@ -408,6 +323,9 @@ end
 
 local alternate = 0
 local done = false
+
+goTo(0, depth, 0, 0, 1)
+
 while not done do
     for n = 1, size do
         for _ = 1, size - 1 do
@@ -472,10 +390,12 @@ if reseal then
     turtle.placeDown()
 end
 
-settings.set("excavation.in_progress", false)
-settings.unset("excavation.xDir")
-settings.unset("excavation.zDir")
-settings.unset("excavation.size")
+settings.unset("excavate.xPos")
+settings.unset("excavate.zPos")
+settings.unset("excavate.xDir")
+settings.unset("excavate.zDir")
+settings.unset("excavate.depth")
+settings.unset("excavate.size")
 settings.save()
 
 print("Mined " .. collected + unloaded .. " items total.")
