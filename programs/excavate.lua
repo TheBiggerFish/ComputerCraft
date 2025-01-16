@@ -18,8 +18,23 @@ if #tArgs ~= 0 and #tArgs ~= 1 and #tArgs ~= 2 then
     return
 end
 
+local continuing = settings.get("excavation.in_progress")
+if continuing == nil or not continuing then
+    continuing = false
+    settings.set("excavation.in_progress", continuing)
+    settings.save()
+end
+
 -- Mine in a quarry pattern until we hit something we can't dig
 local size = settings.get("excavation.size", tonumber(tArgs[1]))
+if continuing and size == nil then
+    print("Excavation size not set")
+    return
+elseif continuing then
+    print("Resuming excavation with size " .. size)
+else
+    size = tonumber(tArgs[1])
+end
 if size < 1 then
     print("Excavate diameter must be positive")
     return
@@ -352,9 +367,7 @@ turnRight()
 xDir = newX - realX
 zDir = newZ - realZ
 
-local continuing = settings.get("excavation.in_progress")
-if continuing == nil or not continuing then
-    continuing = false
+if not continuing then
     coords.saveCoords("home", realX, realY, realZ)
     settings.set("excavation.xDir", xDir)
     settings.set("excavation.zDir", zDir)
