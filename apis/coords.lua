@@ -32,6 +32,14 @@ function module.getCoords(name)
     return x, y, z
 end
 
+---@param name string #The name of the coordinate to get
+---@return boolean #Whether the home setting was set successfully
+function module.clearCoords(name)
+    settings.unset(getName(name))
+    settings.save()
+    return true
+end
+
 ---@param name string #The name of the coordinate to set
 ---@param x number #New home coordinate (x axis)
 ---@param y number #New home coordinate (y axis)
