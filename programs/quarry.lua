@@ -115,9 +115,9 @@ end
 ---@param zd number # Z direction to face
 ---@returns boolean # Whether the turtle successfully moved to the location
 function GoTo(x, y, z, xd, zd)
-    local xDiff = x - xPos
-    local yDiff = y - yPos
-    local zDiff = z - zPos
+    local xDiff = xPos - x
+    local yDiff = yPos - y
+    local zDiff = zPos - z
 
     print("goto directions: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z" .. " " .. xd .. "xd " .. zd .. "zd")
 
@@ -213,6 +213,8 @@ function Refuel(amount)
     xDiff = math.abs(posX - homeX)
     yDiff = math.abs(posY - homeY)
     zDiff = math.abs(posZ - homeZ)
+    print("position: " .. posX .. "x " .. posY .. "y " .. posZ .. "z")
+    print("home: " .. homeX .. "x " .. homeY .. "y " .. homeZ .. "z")
     print("distance from home: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z " .. xDiff + yDiff + zDiff + 2 .. " (total)")
 
     local needed = amount or (xDiff + yDiff + zDiff + 2)
