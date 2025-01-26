@@ -206,7 +206,7 @@ function Refuel(amount)
     yDiff = math.abs(posY - homeY)
     zDiff = math.abs(posZ - homeZ)
 
-    local needed = amount or xDiff + yDiff + zDiff + 2
+    local needed = amount or (xDiff + yDiff + zDiff + 2)
     if turtle.getFuelLevel() < needed then
         for n = 1, 16 do
             if turtle.getItemCount(n) > 0 then
@@ -312,6 +312,7 @@ function ReturnSupplies(_bReturnAfterUnload)
     end
 
     if not _bReturnAfterUnload then
+        print("Finished unloading items")
         return
     end
 
@@ -330,7 +331,6 @@ end
 
 -- Turn the turtle to the left
 function TurnLeft()
-    print("turning left")
     dirX, dirZ = dirZ, -dirX
     SaveSettings()
     turtle.turnLeft()
@@ -338,7 +338,6 @@ end
 
 -- Turn the turtle to the right
 function TurnRight()
-    print("turning right")
     dirX, dirZ = -dirZ, dirX
     SaveSettings()
     turtle.turnRight()
@@ -346,7 +345,6 @@ end
 
 -- Move the turtle forwards one block
 function DoForwards()
-    print("moving forward")
     local oldPosX, oldPosY, oldPosZ = gps.locate()
     if oldPosX == nil or oldPosY == nil or oldPosZ == nil then
         oldPosX, oldPosY, oldPosZ = posX, posY, posZ
@@ -387,7 +385,9 @@ end
 function TryForwards()
     if not Refuel() then
         print("Not enough Fuel")
-        ReturnSupplies(true)
+        if not ReturnSupplies(true) then
+            print("Failed to return to surface")
+        end
     end
 
     return DoForwards()
@@ -395,7 +395,6 @@ end
 
 -- Move the turtle up one block
 function DoUp()
-    print("moving up")
     while not turtle.up() do
         if turtle.detectUp() then
             if turtle.digUp() then
@@ -423,14 +422,15 @@ end
 function TryUp()
     if not Refuel() then
         print("Not enough Fuel")
-        ReturnSupplies(true)
+        if not ReturnSupplies(true) then
+            print("Failed to return to surface")
+        end
     end
     return DoUp()
 end
 
 -- Move the turtle down one block
 function DoDown()
-    print("moving down")
     while not turtle.down() do
         if turtle.detectDown() then
             if turtle.digDown() then
@@ -458,7 +458,9 @@ end
 function TryDown()
     if not Refuel() then
         print("Not enough Fuel")
-        ReturnSupplies(true)
+        if not ReturnSupplies(true) then
+            print("Failed to return to surface")
+        end
     end
     
     return DoDown()
@@ -491,7 +493,7 @@ function ContinueQuarry()
     if returning then
         ReturnSupplies(true)
     elseif resumingAfterReturn then
-        GoTo(lastKnownX, lastKnownY, lastKnownZ, lastKnownDirX, lastKnownDirZ)
+        GoTo(homeX, lastKnownY, homeZ, homeDirX, homeDirZ)
     end
 
     Quarry()
@@ -501,7 +503,6 @@ end
 -- Quarry the area defined by the size of the quarry
 ---@param _bSkipFirstForward boolean | nil # Whether to skip the first forward movement
 function Quarry(_bSkipFirstForward)
-    GoTo(homeX, posY, homeZ, homeDirX, homeDirZ)
 
     if not Refuel() then
         print("Out of Fuel")
