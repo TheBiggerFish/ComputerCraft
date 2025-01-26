@@ -5,6 +5,7 @@ function PrintUsage()
     local programName = arg[0] or fs.getName(shell.getRunningProgram())
     print("Usages:")
     print(programName .. " get [name]")
+    print(programName .. " clear <name>")
     print(programName .. " set <name>")
     print(programName .. " set <name> <x> <y> <z>")
     error()
@@ -51,12 +52,21 @@ function SetCoord(name, x, y, z)
     print("Set alias \"" .. name .. "\" to: " .. x .. " " .. y .. " " .. z)
 end
 
+---@param name string Name of the coordinate to clear
+---@returns nil
+function ClearCoords(name)
+    coords.clearCoords(name)
+    print("Cleared alias \"" .. name .. "\"")
+end
+
 if #arg < 1 then
     PrintUsage()
 elseif arg[1] == "get" and #arg == 1 then
     PrintCoords("")
 elseif arg[1] == "get" and #arg == 2 then
     PrintCoords(arg[2])
+elseif arg[1] == "clear" and #arg == 2 then
+    ClearCoords(arg[2])
 elseif arg[1] == "set" and #arg == 2 then
     SetCoordHere(arg[2])
 elseif arg[1] == "set" and #arg == 5 then
