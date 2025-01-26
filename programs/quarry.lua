@@ -22,8 +22,11 @@ local Refuel
 local ReturnSupplies
 local TurnLeft
 local TurnRight
+local DoForwards
 local TryForwards
+local DoUp
 local TryUp
+local DoDown
 local TryDown
 local StartQuarry
 local ContinueQuarry
@@ -125,14 +128,14 @@ function GoTo(x, y, z, xd, zd)
 
     if yDiff > 0 then
         while yDiff > 0 do
-            if not TryUp() then
+            if not DoUp() then
                 return false
             end
             yDiff = yDiff - 1
         end
     elseif yDiff < 0 then
         while yDiff < 0 do
-            if not TryDown() then
+            if not DoDown() then
                 return false
             end
             yDiff = yDiff + 1
@@ -144,7 +147,7 @@ function GoTo(x, y, z, xd, zd)
             TurnLeft()
         end
         while xDiff > 0 do
-            if not TryForwards() then
+            if not DoForwards() then
                 return false
             end
             xDiff = xDiff - 1
@@ -154,7 +157,7 @@ function GoTo(x, y, z, xd, zd)
             TurnLeft()
         end
         while xDiff < 0 do
-            if not TryForwards() then
+            if not DoForwards() then
                 return false
             end
             xDiff = xDiff + 1
@@ -166,7 +169,7 @@ function GoTo(x, y, z, xd, zd)
             TurnLeft()
         end
         while zDiff > 0 do
-            if not TryForwards() then
+            if not DoForwards() then
                 return false
             end
             zDiff = zDiff - 1
@@ -176,7 +179,7 @@ function GoTo(x, y, z, xd, zd)
             TurnLeft()
         end
         while zDiff < 0 do
-            if not TryForwards() then
+            if not DoForwards() then
                 return false
             end
             zDiff = zDiff + 1
@@ -325,13 +328,22 @@ function ReturnSupplies(_bReturnAfterUnload)
     SaveSettings()
 end
 
-function TryForwards()
-    if not Refuel() then
-        print("Not enough Fuel")
-        ReturnSupplies(true)
+-- Turn the turtle to the left
+function TurnLeft()
+    dirX, dirZ = dirZ, -dirX
+    SaveSettings()
+    turtle.turnLeft()
+end
 
-    end
+-- Turn the turtle to the right
+function TurnRight()
+    dirX, dirZ = -dirZ, dirX
+    SaveSettings()
+    turtle.turnRight()
+end
 
+-- Move the turtle forwards one block
+function DoForwards()
     local oldPosX, oldPosY, oldPosZ = gps.locate()
     if oldPosX == nil or oldPosY == nil or oldPosZ == nil then
         oldPosX, oldPosY, oldPosZ = posX, posY, posZ
@@ -368,25 +380,18 @@ function TryForwards()
     return true
 end
 
-function TurnLeft()
-    dirX, dirZ = -dirZ, dirX
-    SaveSettings()
-    turtle.turnLeft()
-end
-
-function TurnRight()
-    dirX, dirZ = dirZ, -dirX
-    SaveSettings()
-    turtle.turnRight()
-end
-
-
-function TryUp()
+-- Attempt to move the turtle forwards one block
+function TryForwards()
     if not Refuel() then
         print("Not enough Fuel")
         ReturnSupplies(true)
     end
 
+    return DoForwards()
+end
+
+-- Move the turtle up one block
+function DoUp()
     while not turtle.up() do
         if turtle.detectUp() then
             if turtle.digUp() then
@@ -410,13 +415,17 @@ function TryUp()
     return true
 end
 
-
-function TryDown()
+-- Attempt to move the turtle up one block
+function TryUp()
     if not Refuel() then
         print("Not enough Fuel")
         ReturnSupplies(true)
     end
+    return DoUp()
+end
 
+-- Move the turtle down one block
+function DoDown()
     while not turtle.down() do
         if turtle.detectDown() then
             if turtle.digDown() then
@@ -438,6 +447,16 @@ function TryDown()
     yPos = yPos - 1
     SaveSettings()
     return true
+end
+
+-- Attempt to move the turtle down one block
+function TryDown()
+    if not Refuel() then
+        print("Not enough Fuel")
+        ReturnSupplies(true)
+    end
+    
+    return DoDown()
 end
 
 -- Start the quarry by setting the home location and direction
@@ -485,6 +504,7 @@ function Quarry(_bSkipFirstForward)
     end
 
     local firstSkip = _bSkipFirstForward or false
+    print("Do skip first forward: " .. tostring(firstSkip))
 
     local alternate = 0
     local done = false
@@ -492,6 +512,7 @@ function Quarry(_bSkipFirstForward)
         for n = 1, size do
             for _ = 1, size - 1 do
                 if firstSkip then
+                    print("skipping first forward")
                     firstSkip = false
                 elseif not TryForwards() then
                     done = true
