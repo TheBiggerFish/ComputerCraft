@@ -447,13 +447,17 @@ function StartQuarry()
 
     if size == 1 then
         homeDirX, homeDirZ = 0, 0
+        SaveSettings()
+        Quarry(false)
     else
         TryForwards()
         homeDirX, homeDirZ = dirX, dirZ
+        SaveSettings()
+        Quarry(true)
     end
 
-    SaveSettings()
     print("Starting new quarry")
+
 end
 
 -- Quarry the area defined by the size of the quarry
@@ -470,7 +474,9 @@ function ContinueQuarry()
     
 end
 
-function Quarry()
+-- Quarry the area defined by the size of the quarry
+---@param _bSkipFirstForward boolean | nil # Whether to skip the first forward movement
+function Quarry(_bSkipFirstForward)
     GoTo(homeX, posY, homeZ, homeDirX, homeDirZ)
 
     if not Refuel() then
@@ -478,12 +484,16 @@ function Quarry()
         return
     end
 
+    local firstSkip = _bSkipFirstForward or false
+
     local alternate = 0
     local done = false
     while not done do
         for n = 1, size do
             for _ = 1, size - 1 do
-                if not TryForwards() then
+                if firstSkip then
+                    firstSkip = false
+                elseif not TryForwards() then
                     done = true
                     break
                 end
