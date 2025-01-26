@@ -96,7 +96,7 @@ function ConfirmRunning()
         return false
     end
 
-    if dirX == nil or dirZ == nil or homeDirX == nil or homeDirY == nil then
+    if dirX == nil or dirZ == nil or homeDirX == nil or homeDirZ == nil then
         return false
     end
 
@@ -330,6 +330,7 @@ end
 
 -- Turn the turtle to the left
 function TurnLeft()
+    print("turning left")
     dirX, dirZ = dirZ, -dirX
     SaveSettings()
     turtle.turnLeft()
@@ -337,6 +338,7 @@ end
 
 -- Turn the turtle to the right
 function TurnRight()
+    print("turning right")
     dirX, dirZ = -dirZ, dirX
     SaveSettings()
     turtle.turnRight()
@@ -344,6 +346,7 @@ end
 
 -- Move the turtle forwards one block
 function DoForwards()
+    print("moving forward")
     local oldPosX, oldPosY, oldPosZ = gps.locate()
     if oldPosX == nil or oldPosY == nil or oldPosZ == nil then
         oldPosX, oldPosY, oldPosZ = posX, posY, posZ
@@ -392,6 +395,7 @@ end
 
 -- Move the turtle up one block
 function DoUp()
+    print("moving up")
     while not turtle.up() do
         if turtle.detectUp() then
             if turtle.digUp() then
@@ -426,6 +430,7 @@ end
 
 -- Move the turtle down one block
 function DoDown()
+    print("moving down")
     while not turtle.down() do
         if turtle.detectDown() then
             if turtle.digDown() then
@@ -511,12 +516,10 @@ function Quarry(_bSkipFirstForward)
     while not done do
         for n = 1, size do
             for _ = 1, size - 1 do
-                print("trying move forward")
                 if firstSkip then
                     print("skipping first forward")
                     firstSkip = false
                 else
-                    print("moving forward")
                     if not TryForwards() then
                         done = true
                         break
