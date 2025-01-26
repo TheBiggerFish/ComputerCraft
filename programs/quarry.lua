@@ -511,12 +511,16 @@ function Quarry(_bSkipFirstForward)
     while not done do
         for n = 1, size do
             for _ = 1, size - 1 do
+                print("trying move forward")
                 if firstSkip then
                     print("skipping first forward")
                     firstSkip = false
-                elseif not TryForwards() then
-                    done = true
-                    break
+                else
+                    print("moving forward")
+                    if not TryForwards() then
+                        done = true
+                        break
+                    end
                 end
             end
 
