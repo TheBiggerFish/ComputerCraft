@@ -131,7 +131,7 @@ function GoTo(x, y, z, xd, zd)
     if yDiff > 0 then
         print("climbing for goto")
         while yDiff > 0 do
-            if not DoUp() then
+            if not DoDown() then
                 return false
             end
             yDiff = yDiff - 1
@@ -139,7 +139,7 @@ function GoTo(x, y, z, xd, zd)
     elseif yDiff < 0 then
         print("descending for goto")
         while yDiff < 0 do
-            if not DoDown() then
+            if not DoUp() then
                 return false
             end
             yDiff = yDiff + 1
@@ -213,9 +213,12 @@ function Refuel(amount)
     xDiff = math.abs(posX - homeX)
     yDiff = math.abs(posY - homeY)
     zDiff = math.abs(posZ - homeZ)
-    print("position: " .. posX .. "x " .. posY .. "y " .. posZ .. "z")
-    print("home: " .. homeX .. "x " .. homeY .. "y " .. homeZ .. "z")
-    print("distance from home: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z " .. xDiff + yDiff + zDiff + 2 .. " (total)")
+
+    if amount == nil then
+        print("Refuel distance from home: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z " .. xDiff + yDiff + zDiff + 2 .. " (total)")
+    else
+        print("Refuel amount needed: " .. amount)
+    end
 
     local needed = amount or (xDiff + yDiff + zDiff + 2)
     if turtle.getFuelLevel() < needed then
