@@ -115,9 +115,9 @@ end
 ---@param zd number # Z direction to face
 ---@returns boolean # Whether the turtle successfully moved to the location
 function GoTo(x, y, z, xd, zd)
-    local xDiff = xPos - x
-    local yDiff = yPos - y
-    local zDiff = zPos - z
+    local xDiff = posX - x
+    local yDiff = posY - y
+    local zDiff = posZ - z
 
     print("goto directions: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z" .. " " .. xd .. "xd " .. zd .. "zd")
 
@@ -296,7 +296,7 @@ end
 ---@param _bReturnAfterUnload boolean | nil # Whether to return to the mining location after unloading
 function ReturnSupplies(_bReturnAfterUnload)
 
-    lastKnownX, lastKnownY, lastKnownZ = xPos, yPos, zPos
+    lastKnownX, lastKnownY, lastKnownZ = posX, posY, posZ
     lastKnownDirX, lastKnownDirZ = dirX, dirZ
 
     returning = true
@@ -379,13 +379,13 @@ function DoForwards()
         end
     end
 
-    xPos, yPos, zPos = gps.locate()
-    if xPos ~= nil and yPos ~= nil and zPos ~= nil then
-        dirX = xPos - oldPosX
-        dirZ = zPos - oldPosZ
+    posX, posY, posZ = gps.locate()
+    if posX ~= nil and posY ~= nil and posZ ~= nil then
+        dirX = posX - oldPosX
+        dirZ = posZ - oldPosZ
     else
-        xPos = xPos + dirX
-        zPos = zPos + dirZ
+        posX = posX + dirX
+        posZ = posZ + dirZ
     end
     SaveSettings()
 
@@ -424,7 +424,7 @@ function DoUp()
         end
     end
 
-    yPos = yPos - 1
+    posY = posY - 1
     SaveSettings()
     return true
 end
@@ -460,7 +460,7 @@ function DoDown()
         end
     end
 
-    yPos = yPos - 1
+    posY = posY - 1
     SaveSettings()
     return true
 end
