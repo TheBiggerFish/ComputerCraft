@@ -119,6 +119,8 @@ function GoTo(x, y, z, xd, zd)
     local yDiff = y - yPos
     local zDiff = z - zPos
 
+    print("goto directions: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z" .. " " .. xd .. "xd " .. zd .. "zd")
+
     if xDiff == 0 and yDiff == 0 and zDiff == 0 then
         while dirX ~= xd or dirZ ~= zd do
             TurnLeft()
@@ -127,6 +129,7 @@ function GoTo(x, y, z, xd, zd)
     end
 
     if yDiff > 0 then
+        print("climbing for goto")
         while yDiff > 0 do
             if not DoUp() then
                 return false
@@ -134,6 +137,7 @@ function GoTo(x, y, z, xd, zd)
             yDiff = yDiff - 1
         end
     elseif yDiff < 0 then
+        print("descending for goto")
         while yDiff < 0 do
             if not DoDown() then
                 return false
@@ -143,6 +147,7 @@ function GoTo(x, y, z, xd, zd)
     end
 
     if xDiff > 0 then
+        print("lowering x for goto")
         while dirX ~= -1 or dirZ ~= 0 do
             TurnLeft()
         end
@@ -153,6 +158,7 @@ function GoTo(x, y, z, xd, zd)
             xDiff = xDiff - 1
         end
     elseif xDiff < 0 then
+        print("raising x for goto")
         while dirX ~= 1 or dirZ ~= 0 do
             TurnLeft()
         end
@@ -165,6 +171,7 @@ function GoTo(x, y, z, xd, zd)
     end
 
     if zDiff > 0 then
+        print("lowering z for goto")
         while dirX ~= 0 or dirZ ~= -1 do
             TurnLeft()
         end
@@ -175,6 +182,7 @@ function GoTo(x, y, z, xd, zd)
             zDiff = zDiff - 1
         end
     elseif zDiff < 0 then
+        print("raising z for goto")
         while dirX ~= 0 or dirZ ~= 1 do
             TurnLeft()
         end
@@ -205,6 +213,7 @@ function Refuel(amount)
     xDiff = math.abs(posX - homeX)
     yDiff = math.abs(posY - homeY)
     zDiff = math.abs(posZ - homeZ)
+    print("distance from home: " .. xDiff .. "x " .. yDiff .. "y " .. zDiff .. "z " .. xDiff + yDiff + zDiff + 2 .. " (total)")
 
     local needed = amount or (xDiff + yDiff + zDiff + 2)
     if turtle.getFuelLevel() < needed then
