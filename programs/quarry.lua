@@ -309,11 +309,11 @@ function ReturnSupplies(_bReturnAfterUnload)
 
     GoTo(homeX, homeY, homeZ, -homeDirX, -homeDirZ)
 
-    xDiff = math.abs(posX - homeX)
-    yDiff = math.abs(posY - homeY)
-    zDiff = math.abs(posZ - homeZ)
+    xDiff = math.abs(lastKnownX - homeX)
+    yDiff = math.abs(lastKnownY - homeY)
+    zDiff = math.abs(lastKnownZ - homeZ)
 
-    local fuelNeeded = 2 * (xDiff + yDiff + zDiff) + 1
+    local fuelNeeded = 4 * (xDiff + yDiff + zDiff) + 1
 
     if _bReturnAfterUnload and not Refuel(fuelNeeded) then
         UnloadInventory(true)
